@@ -23,12 +23,13 @@ enum planck_layers {
   _RAISE,
   _ADJUST,
   _ARROWS,
-  _SYMBOLS
+  _SYMBOLS,
+  _QWERTY
 };
 
 enum planck_keycodes {
   WORKMAN = SAFE_RANGE,
-  BACKLIT,
+  QWERTY,
 };
 
 #define LOWER MO(_LOWER)
@@ -105,8 +106,8 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
  * `-----------------------------------------------------------------------------------'
  */
 [_ADJUST] = LAYOUT_planck_grid(
-    _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______,
-    _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______,
+    _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, WORKMAN,
+    _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, QWERTY,
     _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______,
     _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______
 ),
@@ -145,9 +146,47 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     _______, _______, S(KC_COMM),S(KC_LBRC),S(KC_9), KC_LBRC, KC_RBRC, S(KC_0), S(KC_RBRC), S(KC_DOT),_______,    _______,
     _______, _______, _______,   _______,   _______, _______, _______, _______, _______,    _______,  _______,    _______,
     _______, _______, _______,   _______,   _______, KC_EQL,  KC_EQL,  _______, _______,    _______,  _______,    _______
-)
+),
+/* Qwerty
+ * ,-----------------------------------------------------------------------------------.
+ * | Tab  |   Q  |   W  |   E  |   R  |   T  |   Y  |   U  |   I  |   O  |   P  | Bksp |
+ * |------+------+------+------+------+------+------+------+------+------+------+------|
+ * | Esc  |   A  |   S  |   D  |   F  |   G  |   H  |   J  |   K  |   L  |   ;  |  "   |
+ * |------+------+------+------+------+------+------+------+------+------+------+------|
+ * | Shift|   Z  |   X  |   C  |   V  |   B  |   N  |   M  |   ,  |   .  |   /  |Enter |
+ * |------+------+------+------+------+------+------+------+------+------+------+------|
+ * | Brite| Ctrl | Alt  | GUI  |Lower |    Space    |Raise | Left | Down |  Up  |Right |
+ * `-----------------------------------------------------------------------------------'
+ */
+[_QWERTY] = LAYOUT_planck_grid(
+    _______,  KC_Q,    KC_W,    KC_E,    KC_R,    KC_T,    KC_Y,    KC_U,    KC_I,    KC_O,    KC_P,    _______,
+    KC_TAB,  KC_A,    KC_S,    KC_D,    KC_F,    KC_G,    KC_H,    KC_J,    KC_K,    KC_L,    KC_SCLN, _______,
+    _______, KC_Z,    KC_X,    KC_C,    KC_V,    KC_B,    KC_N,    KC_M,    KC_COMM, KC_DOT,  KC_SLSH, _______ ,
+    _______, _______, _______, _______, _______,   _______,  _______,  _______,   KC_LEFT, KC_DOWN, KC_UP,   KC_RIGHT
+),
 
 };
+
+bool process_record_user(uint16_t keycode, keyrecord_t *record) {
+    switch (keycode) {
+        case QWERTY:
+            if (record->event.pressed) {
+                autoshift_disable();
+                layer_on(_QWERTY);
+            }
+            return false;
+            break;
+        case WORKMAN:
+            if (record->event.pressed) {
+                autoshift_enable();
+                layer_off(_QWERTY);
+            }
+            return false;
+            break;
+
+    }
+    return true;
+}
 
 
 layer_state_t layer_state_set_user(layer_state_t state) {

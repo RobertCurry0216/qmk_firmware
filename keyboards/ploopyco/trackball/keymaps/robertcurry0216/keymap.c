@@ -25,7 +25,7 @@ void process_wheel_user(report_mouse_t* mouse_report, int16_t h, int16_t v) {}
 
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     [0] = LAYOUT( /* Base */
-        KC_BTN1, KC_BTN3, KC_BTN2, DRAG_SCROLL, MO(1)
+        KC_BTN1, KC_BTN3, DRAG_SCROLL, KC_BTN2, MO(1)
     ),
     [1] = LAYOUT(LCTL(KC_C), _______, LCTL(KC_V), _______, _______)
 };
