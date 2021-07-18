@@ -17,15 +17,22 @@
  */
 #include QMK_KEYBOARD_H
 
+#define KC_COPY LGUI(KC_C)
+#define KC_PASTE LGUI(KC_V)
+
+#define KC_WCOPY LSFT(KC_C)
+#define KC_WPASTE LSFT(KC_V)
+
 // safe range starts at `PLOOPY_SAFE_RANGE` instead.
 enum {
-    TD_ESC_CAPS,
+    TD_CPY_PST,
+    TD_WCPY_WPST,
 };
 
 // Tap Dance definitions
 qk_tap_dance_action_t tap_dance_actions[] = {
-    // Tap once for Escape, twice for Caps Lock
-    [TD_ESC_CAPS] = ACTION_TAP_DANCE_DOUBLE(KC_ESC, KC_CAPS),
+    [TD_CPY_PST] = ACTION_TAP_DANCE_DOUBLE(KC_COPY, KC_PASTE),
+    [TD_WCPY_WPST] = ACTION_TAP_DANCE_DOUBLE(KC_WCOPY, KC_WPASTE),
 };
 
 //turn off mouse wheel
@@ -34,6 +41,6 @@ void process_wheel_user(report_mouse_t* mouse_report, int16_t h, int16_t v) {}
 
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     [0] = LAYOUT( /* Base */
-        KC_BTN1, KC_BTN3, DRAG_SCROLL, KC_BTN2, DRAG_SCROLL
+        KC_BTN1, KC_BTN3, TD(TD_CPY_PST), KC_BTN2, DRAG_SCROLL
     )
 };
