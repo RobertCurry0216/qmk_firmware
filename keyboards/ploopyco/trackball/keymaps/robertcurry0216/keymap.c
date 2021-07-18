@@ -18,6 +18,15 @@
 #include QMK_KEYBOARD_H
 
 // safe range starts at `PLOOPY_SAFE_RANGE` instead.
+enum {
+    TD_ESC_CAPS,
+};
+
+// Tap Dance definitions
+qk_tap_dance_action_t tap_dance_actions[] = {
+    // Tap once for Escape, twice for Caps Lock
+    [TD_ESC_CAPS] = ACTION_TAP_DANCE_DOUBLE(KC_ESC, KC_CAPS),
+};
 
 //turn off mouse wheel
 void process_wheel_user(report_mouse_t* mouse_report, int16_t h, int16_t v) {}
