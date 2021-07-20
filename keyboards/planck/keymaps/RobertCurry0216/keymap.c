@@ -31,8 +31,6 @@ enum planck_layers {
 enum planck_keycodes {
   WORKMAN = SAFE_RANGE,
   QWERTY,
-  TOWIN,
-  TOMAC
 };
 
 #define LOWER MO(_LOWER)
@@ -128,8 +126,8 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
  * `-----------------------------------------------------------------------------------'
  */
 [_ADJUST] = LAYOUT_planck_grid(
-    TOWIN,   _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, WORKMAN,
-    TOMAC,   _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, QWERTY,
+    DF(_WORKMAN_WIN),   _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, WORKMAN,
+    DF(_WORKMAN),   _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, QWERTY,
     _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______,
     _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______
 ),
@@ -203,14 +201,6 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
                 autoshift_enable();
                 layer_off(_QWERTY);
             }
-            return false;
-            break;
-        case TOWIN:
-            DF(_WORKMAN_WIN);
-            return false;
-            break;
-        case TOMAC:
-            DF(_WORKMAN);
             return false;
             break;
 
