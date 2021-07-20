@@ -18,11 +18,17 @@
 #include <stdlib.h>
 #include QMK_KEYBOARD_H
 
-#define KC_COPY LGUI(KC_C)
-#define KC_PASTE LGUI(KC_V)
+// mac keycodes
+#define KC_MAC_COPY G(KC_C)
+#define KC_MAC_PASTE G(KC_V)
+#define KC_MAC_UNDO G(KC_Z)
+#define KC_MAC_REDO SGUI(KC_Z)
 
-#define KC_WCOPY C(KC_C)
-#define KC_WPASTE C(KC_V)
+// windows keycodes
+#define KC_WIN_COPY C(KC_C)
+#define KC_WIN_PASTE C(KC_V)
+#define KC_WIN_UNDO C(KC_Z)
+#define KC_WIN_REDO C(KC_Y)
 
 // safe range starts at `PLOOPY_SAFE_RANGE` instead.
 enum {
@@ -40,6 +46,7 @@ enum ploopy_layers {
 bool is_swipe_gesture = false;
 int16_t swipe_x = 0;
 int16_t swipe_y = 0;
+const int16_t SWIPE_THRESHOLD = 10;
 
 // os vars
 bool is_mac = true;
@@ -55,27 +62,37 @@ void process_mouse_user(report_mouse_t* mouse_report, int16_t x, int16_t y) {
 }
 
 void process_swipe_gesture(int16_t x, int16_t y) {
+    if (abs(x) < SWIPE_THRESHOLD && abs(y) < SWIPE_THRESHOLD) {
+        return;
+    }
+
     if (abs(x) > abs(y)){
-        if (x > 0) {
-            // swipe right
+        if (x > 0) { // swipe right
             if (is_mac){
-                tap_code16(KC_PASTE);
+                tap_code16(KC_MAC_PASTE);
             } else {
-                tap_code16(KC_WPASTE);
+                tap_code16(KC_WIN_PASTE);
             }
-        } else {
-            // swipe left
+        } else { // swipe left
             if (is_mac) {
-                tap_code16(KC_COPY);
+                tap_code16(KC_MAC_COPY);
             } else {
-                tap_code16(KC_WCOPY);
+                tap_code16(KC_WIN_COPY);
             }
         }
     } else {
-        if (y > 0){
-            // swipe back
-        } else {
-            // swipe forward
+        if (y > 0){ // swipe back
+            if (is_mac) {
+                tap_code16(KC_MAC_REDO);
+            } else {
+                tap_code16(KC_WIN_REDO);
+            }
+        } else { // swipe forward
+            if (is_mac) {
+                tap_code16(KC_MAC_UNDO);
+            } else {
+                tap_code16(KC_WIN_UNDO);
+            }
         }
     }
 }
