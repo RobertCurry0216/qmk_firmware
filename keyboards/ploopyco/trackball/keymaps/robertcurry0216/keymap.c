@@ -15,32 +15,105 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+#include <stdlib.h>
 #include QMK_KEYBOARD_H
 
 #define KC_COPY LGUI(KC_C)
 #define KC_PASTE LGUI(KC_V)
 
-#define KC_WCOPY LSFT(KC_C)
-#define KC_WPASTE LSFT(KC_V)
+#define KC_WCOPY C(KC_C)
+#define KC_WPASTE C(KC_V)
 
 // safe range starts at `PLOOPY_SAFE_RANGE` instead.
 enum {
-    TD_CPY_PST,
-    TD_WCPY_WPST,
+    KC_GESTURE=PLOOPY_SAFE_RANGE,
+    KC_WIN,
+    KC_MAC
 };
 
-// Tap Dance definitions
-qk_tap_dance_action_t tap_dance_actions[] = {
-    [TD_CPY_PST] = ACTION_TAP_DANCE_DOUBLE(KC_COPY, KC_PASTE),
-    [TD_WCPY_WPST] = ACTION_TAP_DANCE_DOUBLE(KC_WCOPY, KC_WPASTE),
+enum ploopy_layers {
+    MAIN,
+    CONFIG
 };
+
+// swipe gesture vars
+bool is_swipe_gesture = false;
+int16_t swipe_x = 0;
+int16_t swipe_y = 0;
+
+// os vars
+bool is_mac = true;
+
+void process_mouse_user(report_mouse_t* mouse_report, int16_t x, int16_t y) {
+    if (is_swipe_gesture) {
+        swipe_x += x;
+        swipe_y += y;
+    } else {
+        mouse_report->x = x;
+        mouse_report->y = y;
+    }
+}
+
+void process_swipe_gesture(int16_t x, int16_t y) {
+    if (abs(x) > abs(y)){
+        if (x > 0) {
+            // swipe right
+            if (is_mac){
+                tap_code16(KC_PASTE);
+            } else {
+                tap_code16(KC_WPASTE);
+            }
+        } else {
+            // swipe left
+            if (is_mac) {
+                tap_code16(KC_COPY);
+            } else {
+                tap_code16(KC_WCOPY);
+            }
+        }
+    } else {
+        if (y > 0){
+            // swipe back
+        } else {
+            // swipe forward
+        }
+    }
+}
 
 //turn off mouse wheel
 void process_wheel_user(report_mouse_t* mouse_report, int16_t h, int16_t v) {}
 
 
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
-    [0] = LAYOUT( /* Base */
-        KC_BTN1, KC_BTN3, TD(TD_CPY_PST), KC_BTN2, DRAG_SCROLL
+    [MAIN] = LAYOUT( /* Base */
+        KC_BTN1, KC_BTN3, KC_GESTURE, KC_BTN2, DRAG_SCROLL
+    ),
+    [CONFIG] = LAYOUT( /* config */
+        _______, _______, _______, KC_WIN, KC_MAC
     )
 };
+
+bool process_record_user(uint16_t keycode, keyrecord_t *record) {
+    switch (keycode) {
+        case KC_GESTURE:
+            if (record->event.pressed) {
+                layer_on(CONFIG);
+                is_swipe_gesture = true;
+            } else {
+                layer_off(CONFIG);
+                process_swipe_gesture(swipe_x, swipe_y);
+                swipe_x = 0;
+                swipe_y = 0;
+                is_swipe_gesture = false;
+            }
+            return false;
+        case KC_WIN:
+            is_mac = false;
+            return false;
+        case KC_MAC:
+            is_mac = true;
+            return false;
+        default:
+            return true; // Process all other keycodes normally
+    }
+}
