@@ -84,7 +84,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     KC_ESC,  KC_Q,    KC_D,    KC_R,    KC_W,    KC_B,    KC_J,    KC_F,    KC_U,    KC_P,    KC_SCLN,    KC_BSPC,
     LT_TAB,  KC_A,    KC_S,    KC_H,    KC_T,    KC_G,    KC_Y,    KC_N,    KC_E,    KC_O,    KC_I, LT_QUOT,
     SFT_CAPS, KC_Z,   KC_X,    KC_M,    KC_C,    KC_V,    KC_K,    KC_L,    KC_COMM, KC_DOT,  KC_SLSH, KC_ENT ,
-    XXXXXXX,  OS_CTL, KC_LALT, OS_GUI, LOWER,   KC_SPC,  KC_SPC,  RAISE,   KC_MEH,  XXXXXXX, XXXXXXX, XXXXXXX
+    XXXXXXX,  OS_CTL, KC_LALT, OS_GUI,  LOWER,   KC_SPC,  KC_SPC,  RAISE,   KC_MEH,  XXXXXXX, XXXXXXX, XXXXXXX
 ),
 
 /* Raise
@@ -204,7 +204,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
                 autoshift_disable();
                 layer_on(_GAMING);
             }
-            rgblight_setrgb(RGB_PINK);
+            rgblight_setrgb(165, 16, 128);
             return false;
             break;
 
@@ -214,20 +214,20 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
                 layer_off(_GAMING);
             }
             if (is_mac) {
-                rgblight_setrgb(RGB_TEAL);
+                rgblight_setrgb(32, 163, 158);
             } else {
-                rgblight_setrgb(RGB_YELLOW);
+                rgblight_setrgb(246, 174, 45);
             }
             return false;
             break;
 
         case TO_MAC:
-            rgblight_setrgb(RGB_TEAL);
+            rgblight_setrgb(32, 163, 158);
             is_mac = true;
             return false;
 
         case TO_WIN:
-            rgblight_setrgb(RGB_YELLOW);
+            rgblight_setrgb(246, 174, 45);
             is_mac = false;
             return false;
 
@@ -252,5 +252,5 @@ layer_state_t layer_state_set_user(layer_state_t state) {
 }
 
 void keyboard_post_init_user(void) {
-    rgblight_setrgb(RGB_TEAL);
+    rgblight_setrgb(32, 163, 158);
 }
