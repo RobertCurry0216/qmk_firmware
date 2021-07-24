@@ -29,6 +29,7 @@
 #define KC_WIN_PASTE C(KC_V)
 #define KC_WIN_UNDO C(KC_Z)
 #define KC_WIN_REDO C(KC_Y)
+#define KC_WIN_PSCR SGUI(KC_S)
 
 // safe range starts at `PLOOPY_SAFE_RANGE` instead.
 enum {
@@ -63,6 +64,13 @@ void process_mouse_user(report_mouse_t* mouse_report, int16_t x, int16_t y) {
 
 void process_swipe_gesture(int16_t x, int16_t y) {
     if (abs(x) < SWIPE_THRESHOLD && abs(y) < SWIPE_THRESHOLD) {
+        if (is_mac){
+            register_code(KC_LCTL);
+            tap_code16(SGUI(KC_4));
+            unregister_code(KC_LCTL);
+        } else {
+            tap_code16(KC_WIN_PSCR);
+        }
         return;
     }
 
