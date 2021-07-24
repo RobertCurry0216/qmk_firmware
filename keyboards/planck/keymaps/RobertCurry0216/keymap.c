@@ -25,12 +25,12 @@ enum planck_layers {
   _ADJUST,
   _ARROWS,
   _SYMBOLS,
-  _QWERTY
+  _GAMING
 };
 
 enum planck_keycodes {
   WORKMAN = SAFE_RANGE,
-  QWERTY,
+  GAMING,
 };
 
 #define LOWER MO(_LOWER)
@@ -41,7 +41,7 @@ enum planck_keycodes {
 
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
-/* Worman
+/* Workman mac
  * ,-----------------------------------------------------------------------------------.
  * | Esc  |   Q  |   D  |   R  |   W  |   B  |   J  |   F  |   U  |   P  |   ;  | Bksp |
  * |------+------+------+------+------+------+------+------+------+------+------+------|
@@ -60,7 +60,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 ),
 
 
-/* Worman
+/* Workman windows
  * ,-----------------------------------------------------------------------------------.
  * | Esc  |   Q  |   D  |   R  |   W  |   B  |   J  |   F  |   U  |   P  |   ;  | Bksp |
  * |------+------+------+------+------+------+------+------+------+------+------+------|
@@ -127,7 +127,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
  */
 [_ADJUST] = LAYOUT_planck_grid(
     DF(_WORKMAN_WIN),   _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, WORKMAN,
-    DF(_WORKMAN),   _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, QWERTY,
+    DF(_WORKMAN),   _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, GAMING,
     _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______,
     _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______
 ),
@@ -167,39 +167,39 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     _______, _______, _______,   _______,   _______, _______, _______, _______, _______,    _______,  _______,    _______,
     _______, _______, _______,   _______,   _______, KC_EQL,  KC_EQL,  _______, _______,    _______,  _______,    _______
 ),
-/* Qwerty
+/* GAMING
  * ,-----------------------------------------------------------------------------------.
- * | Tab  |   Q  |   W  |   E  |   R  |   T  |   Y  |   U  |   I  |   O  |   P  | Bksp |
+ * | Esc  |   Q  |   W  |   E  |   R  |   T  |   Y  |   U  |   I  |   O  |   P  | Bksp |
  * |------+------+------+------+------+------+------+------+------+------+------+------|
- * | Esc  |   A  |   S  |   D  |   F  |   G  |   H  |   J  |   K  |   L  |   ;  |  "   |
+ * | Tab  |   A  |   S  |   D  |   F  |   G  |   H  |   J  |   K  |   L  |   ;  |  "   |
  * |------+------+------+------+------+------+------+------+------+------+------+------|
- * | Shift|   Z  |   X  |   C  |   V  |   B  |   N  |   M  |   ,  |   .  |   /  |Enter |
+ * | Shift|   Z  |   X  |   C  |   V  |   B  |   N  |   M  |   ,  |   .  |  Up  |Enter |
  * |------+------+------+------+------+------+------+------+------+------+------+------|
- * | Brite| Ctrl | Alt  | GUI  |Lower |    Space    |Raise | Left | Down |  Up  |Right |
+ * |      |      | Alt  | Ctrl |Lower |    Space    |Raise |      | Left |  Up  |Right |
  * `-----------------------------------------------------------------------------------'
  */
-[_QWERTY] = LAYOUT_planck_grid(
-    _______,  KC_Q,    KC_W,    KC_E,    KC_R,    KC_T,    KC_Y,    KC_U,    KC_I,    KC_O,    KC_P,    _______,
+[_GAMING] = LAYOUT_planck_grid(
+    _______, KC_Q,    KC_W,    KC_E,    KC_R,    KC_T,    KC_Y,    KC_U,    KC_I,    KC_O,    KC_P,    _______,
     KC_TAB,  KC_A,    KC_S,    KC_D,    KC_F,    KC_G,    KC_H,    KC_J,    KC_K,    KC_L,    KC_SCLN, _______,
-    KC_LSFT, KC_Z,    KC_X,    KC_C,    KC_V,    KC_B,    KC_N,    KC_M,    KC_COMM, KC_DOT,  KC_SLSH, _______ ,
-    XXXXXXX, _______, _______, _______, _______,   _______,  _______,  _______,   KC_LEFT, KC_UP, KC_DOWN, KC_RIGHT
+    KC_LSFT, KC_Z,    KC_X,    KC_C,    KC_V,    KC_B,    KC_N,    KC_M,    KC_COMM, KC_DOT,  KC_UP,   _______ ,
+    XXXXXXX, XXXXXXX, KC_LALT, KC_LCTL, _______, _______, _______, _______, _______, KC_LEFT, KC_DOWN, KC_RIGHT
 ),
 
 };
 
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
     switch (keycode) {
-        case QWERTY:
+        case GAMING:
             if (record->event.pressed) {
                 autoshift_disable();
-                layer_on(_QWERTY);
+                layer_on(_GAMING);
             }
             return false;
             break;
         case WORKMAN:
             if (record->event.pressed) {
                 autoshift_enable();
-                layer_off(_QWERTY);
+                layer_off(_GAMING);
             }
             return false;
             break;
