@@ -15,6 +15,9 @@
  */
 
 #include QMK_KEYBOARD_H
+#include "muse.h"
+#include "rgblight.h"
+#include "print.h"
 
 
 enum planck_layers {
@@ -34,7 +37,8 @@ enum planck_keycodes {
   TO_MAC,
   TO_WIN,
   OS_CTL,
-  OS_GUI
+  OS_GUI,
+  OS_ALT
 };
 
 #define LOWER MO(_LOWER)
@@ -73,14 +77,14 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
  * |------+------+------+------+------+------+------+------+------+------+------+------|
  * | Shift|   Z  |   X  |   M  |   C  |   V  |   K  |   L  |   ,  |   .  |   /  |Enter |
  * |------+------+------+------+------+------+------+------+------+------+------+------|
- * | Ctrl | Alt  |Hyper | GUI  |Lower |    Space    |Raise | Meh  |BLdwn | BLup |BLcyc |
+ * |      | Ctrl | Alt  | GUI  |Lower |    Space    |Raise | Meh  |      |      |      |
  * `-----------------------------------------------------------------------------------'
  */
 [_WORKMAN] = LAYOUT_planck_grid(
     KC_ESC,  KC_Q,    KC_D,    KC_R,    KC_W,    KC_B,    KC_J,    KC_F,    KC_U,    KC_P,    KC_SCLN,    KC_BSPC,
     LT_TAB,  KC_A,    KC_S,    KC_H,    KC_T,    KC_G,    KC_Y,    KC_N,    KC_E,    KC_O,    KC_I, LT_QUOT,
     SFT_CAPS, KC_Z,   KC_X,    KC_M,    KC_C,    KC_V,    KC_K,    KC_L,    KC_COMM, KC_DOT,  KC_SLSH, KC_ENT ,
-    OS_CTL,  KC_LALT, KC_HYPR, OS_GUI, LOWER,   KC_SPC,  KC_SPC,  RAISE,   KC_MEH, RGB_HUI, RGB_VAI, RGB_TOG
+    XXXXXXX,  OS_CTL, KC_LALT, OS_GUI, LOWER,   KC_SPC,  KC_SPC,  RAISE,   KC_MEH,  XXXXXXX, XXXXXXX, XXXXXXX
 ),
 
 /* Raise
@@ -152,7 +156,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     _______, KC_F1,   KC_F2,   KC_F3,   KC_F4,   KC_F5,   KC_F6,   KC_HOME, KC_UP,   KC_END,  _______, _______,
     _______, KC_F7,   KC_F8,   KC_F9,   KC_F10,  KC_F11,  KC_F12,  KC_LEFT, KC_DOWN, KC_RGHT, _______, _______,
     _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______,
-    _______, _______, _______, _______, _______, KC_LALT, KC_LALT, _______, KC_WH_L, KC_WH_D, KC_WH_U, KC_WH_R
+    _______, _______, _______, _______, _______, OS_ALT, OS_ALT, _______, KC_WH_L, KC_WH_D, KC_WH_U, KC_WH_R
 ),
 
 /* Symbols
@@ -172,6 +176,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     _______, _______, _______,   _______,   _______, _______, _______, _______, _______,    _______,  _______,    _______,
     _______, _______, _______,   _______,   _______, KC_EQL,  KC_EQL,  _______, _______,    _______,  _______,    _______
 ),
+
 /* GAMING
  * ,-----------------------------------------------------------------------------------.
  * | Esc  |   Q  |   W  |   E  |   R  |   T  |   Y  |   U  |   I  |   O  |   P  | Bksp |
@@ -199,27 +204,43 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
                 autoshift_disable();
                 layer_on(_GAMING);
             }
+            rgblight_setrgb(RGB_PINK);
             return false;
             break;
+
         case WORKMAN:
             if (record->event.pressed) {
                 autoshift_enable();
                 layer_off(_GAMING);
             }
+            if (is_mac) {
+                rgblight_setrgb(RGB_TEAL);
+            } else {
+                rgblight_setrgb(RGB_YELLOW);
+            }
             return false;
             break;
+
         case TO_MAC:
+            rgblight_setrgb(RGB_TEAL);
             is_mac = true;
             return false;
+
         case TO_WIN:
+            rgblight_setrgb(RGB_YELLOW);
             is_mac = false;
             return false;
+
         case OS_CTL:
             process_os_key(record->event.pressed, KC_LCTL, KC_LGUI);
             return false;
                 
         case OS_GUI:
             process_os_key(record->event.pressed, KC_LGUI, KC_LCTL);
+            return false;
+
+        case OS_ALT:
+            process_os_key(record->event.pressed, KC_LALT, KC_LCTL);
             return false;
     }
     return true;
@@ -228,4 +249,8 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
 
 layer_state_t layer_state_set_user(layer_state_t state) {
   return update_tri_layer_state(state, _LOWER, _RAISE, _ADJUST);
+}
+
+void keyboard_post_init_user(void) {
+    rgblight_setrgb(RGB_TEAL);
 }
