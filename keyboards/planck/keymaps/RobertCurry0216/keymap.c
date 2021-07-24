@@ -31,6 +31,10 @@ enum planck_layers {
 enum planck_keycodes {
   WORKMAN = SAFE_RANGE,
   GAMING,
+  TO_MAC,
+  TO_WIN,
+  OS_CTL,
+  OS_GUI
 };
 
 #define LOWER MO(_LOWER)
@@ -38,6 +42,26 @@ enum planck_keycodes {
 #define SFT_CAPS LSFT_T(KC_CAPSLOCK)
 #define LT_TAB LT(_ARROWS, KC_TAB)
 #define LT_QUOT LT(_SYMBOLS, KC_QUOT)
+
+// os vars
+bool is_mac = true;
+
+// helper function to process a press differently depending on the os flag
+void process_os_key(bool is_pressed, uint16_t mac_keycode, uint16_t win_keycode){
+    if (is_pressed) {
+        if (is_mac){
+            register_code(mac_keycode);
+        } else {
+            register_code(win_keycode);
+        }
+    } else {
+        if (is_mac){
+            unregister_code(mac_keycode);
+        } else {
+            unregister_code(win_keycode);
+        }
+    }
+}
 
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
@@ -56,26 +80,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     KC_ESC,  KC_Q,    KC_D,    KC_R,    KC_W,    KC_B,    KC_J,    KC_F,    KC_U,    KC_P,    KC_SCLN,    KC_BSPC,
     LT_TAB,  KC_A,    KC_S,    KC_H,    KC_T,    KC_G,    KC_Y,    KC_N,    KC_E,    KC_O,    KC_I, LT_QUOT,
     SFT_CAPS, KC_Z,   KC_X,    KC_M,    KC_C,    KC_V,    KC_K,    KC_L,    KC_COMM, KC_DOT,  KC_SLSH, KC_ENT ,
-    KC_LCTL, KC_LALT, KC_HYPR, KC_LGUI, LOWER,   KC_SPC,  KC_SPC,  RAISE,   KC_MEH, RGB_HUI, RGB_VAI, RGB_TOG
-),
-
-
-/* Workman windows
- * ,-----------------------------------------------------------------------------------.
- * | Esc  |   Q  |   D  |   R  |   W  |   B  |   J  |   F  |   U  |   P  |   ;  | Bksp |
- * |------+------+------+------+------+------+------+------+------+------+------+------|
- * | Tab  |   A  |   S  |   H  |   T  |   G  |   Y  |   N  |   E  |   O  |   I  |  "   |
- * |------+------+------+------+------+------+------+------+------+------+------+------|
- * | Shift|   Z  |   X  |   M  |   C  |   V  |   K  |   L  |   ,  |   .  |   /  |Enter |
- * |------+------+------+------+------+------+------+------+------+------+------+------|
- * | Ctrl | Alt  |Hyper | GUI  |Lower |    Space    |Raise | Meh  |BLdwn | BLup |BLcyc |
- * `-----------------------------------------------------------------------------------'
- */
-[_WORKMAN_WIN] = LAYOUT_planck_grid(
-    KC_ESC,  KC_Q,    KC_D,    KC_R,    KC_W,    KC_B,    KC_J,    KC_F,    KC_U,    KC_P,    KC_SCLN,    KC_BSPC,
-    LT_TAB,  KC_A,    KC_S,    KC_H,    KC_T,    KC_G,    KC_Y,    KC_N,    KC_E,    KC_O,    KC_I, LT_QUOT,
-    SFT_CAPS, KC_Z,   KC_X,    KC_M,    KC_C,    KC_V,    KC_K,    KC_L,    KC_COMM, KC_DOT,  KC_SLSH, KC_ENT ,
-    KC_LGUI, KC_LALT, KC_HYPR, KC_LCTL, LOWER,   KC_SPC,  KC_SPC,  RAISE,   KC_MEH, RGB_HUI, RGB_VAI, RGB_TOG
+    OS_CTL,  KC_LALT, KC_HYPR, OS_GUI, LOWER,   KC_SPC,  KC_SPC,  RAISE,   KC_MEH, RGB_HUI, RGB_VAI, RGB_TOG
 ),
 
 /* Raise
@@ -126,8 +131,8 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
  * `-----------------------------------------------------------------------------------'
  */
 [_ADJUST] = LAYOUT_planck_grid(
-    DF(_WORKMAN_WIN),   _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, WORKMAN,
-    DF(_WORKMAN),   _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, GAMING,
+    TO_WIN,   _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, WORKMAN,
+    TO_MAC,   _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, GAMING,
     _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______,
     _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______
 ),
@@ -203,7 +208,19 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
             }
             return false;
             break;
-
+        case TO_MAC:
+            is_mac = true;
+            return false;
+        case TO_WIN:
+            is_mac = false;
+            return false;
+        case OS_CTL:
+            process_os_key(record->event.pressed, KC_LCTL, KC_LGUI);
+            return false;
+                
+        case OS_GUI:
+            process_os_key(record->event.pressed, KC_LGUI, KC_LCTL);
+            return false;
     }
     return true;
 }
