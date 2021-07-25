@@ -38,7 +38,8 @@ enum planck_keycodes {
   OS_CTL,
   OS_GUI,
   OS_ALT,
-  ALT_TAB
+  OS_NTAB,
+  OS_PTAB
 };
 
 #define LOWER MO(_LOWER)
@@ -54,15 +55,15 @@ bool is_mac = true;
 void process_os_key(bool is_pressed, uint16_t mac_keycode, uint16_t win_keycode){
     if (is_pressed) {
         if (is_mac){
-            register_code(mac_keycode);
+            register_code16(mac_keycode);
         } else {
-            register_code(win_keycode);
+            register_code16(win_keycode);
         }
     } else {
         if (is_mac){
-            unregister_code(mac_keycode);
+            unregister_code16(mac_keycode);
         } else {
-            unregister_code(win_keycode);
+            unregister_code16(win_keycode);
         }
     }
 }
@@ -117,10 +118,10 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
  * `-----------------------------------------------------------------------------------'
  */
 [_LOWER] = LAYOUT_planck_grid(
-    _______, _______, _______, _______, _______, _______, _______,SGUI(KC_LBRC),C(KC_UP),  SGUI(KC_RBRC), _______, _______,
-    _______, _______, _______, _______, _______, _______, _______,C(KC_LEFT),   C(KC_DOWN),C(KC_RIGHT),   _______, _______,
-    _______, _______, _______, _______, _______, _______, _______, _______,  _______,      _______,       _______, _______,
-    _______, _______, _______, _______, _______, KC_F1,   KC_F1,   _______,  _______,      _______,       _______, _______
+    _______, _______, _______, _______, _______, _______, _______, OS_PTAB,   C(KC_UP),  OS_NTAB, _______, _______,
+    _______, _______, _______, _______, _______, _______, _______, C(KC_LEFT),C(KC_DOWN),C(KC_RIGHT),   _______, _______,
+    _______, _______, _______, _______, _______, _______, _______, _______,   _______,   _______,       _______, _______,
+    _______, _______, _______, _______, _______, KC_F1,   KC_F1,   _______,   _______,   _______,       _______, _______
 ),
 
 /* Adjust (Lower + Raise)
@@ -241,6 +242,14 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
 
         case OS_ALT:
             process_os_key(record->event.pressed, KC_LALT, KC_LCTL);
+            return false;
+
+        case OS_PTAB:
+            process_os_key(record->event.pressed, SGUI(KC_LBRC), C(KC_PGUP));
+            return false;
+
+        case OS_NTAB:
+            process_os_key(record->event.pressed, SGUI(KC_RBRC), C(KC_PGDN));
             return false;
     }
     return true;
