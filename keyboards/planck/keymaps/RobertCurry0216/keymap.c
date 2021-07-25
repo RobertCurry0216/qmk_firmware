@@ -50,10 +50,6 @@ enum planck_keycodes {
 // os vars
 bool is_mac = true;
 
-// super alt tab
-bool is_alt_tab_active = false; 
-uint16_t alt_tab_timer = 0;     
-
 // helper function to process a press differently depending on the os flag
 void process_os_key(bool is_pressed, uint16_t mac_keycode, uint16_t win_keycode){
     if (is_pressed) {
@@ -88,7 +84,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     KC_ESC,  KC_Q,    KC_D,    KC_R,    KC_W,    KC_B,    KC_J,    KC_F,    KC_U,    KC_P,    KC_SCLN, KC_BSPC,
     LT_TAB,  KC_A,    KC_S,    KC_H,    KC_T,    KC_G,    KC_Y,    KC_N,    KC_E,    KC_O,    KC_I,    LT_QUOT,
     SFT_CAPS, KC_Z,   KC_X,    KC_M,    KC_C,    KC_V,    KC_K,    KC_L,    KC_COMM, KC_DOT,  KC_SLSH, KC_ENT ,
-    ALT_TAB,  OS_CTL, KC_LALT, OS_GUI,  LOWER,   KC_SPC,  KC_SPC,  RAISE,   KC_MEH,  XXXXXXX, XXXXXXX, XXXXXXX
+    XXXXXXX,  OS_CTL, KC_LALT, OS_GUI,  LOWER,   KC_SPC,  KC_SPC,  RAISE,   KC_MEH,  XXXXXXX, XXXXXXX, XXXXXXX
 ),
 
 /* Raise
@@ -246,19 +242,6 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
         case OS_ALT:
             process_os_key(record->event.pressed, KC_LALT, KC_LCTL);
             return false;
-
-        case ALT_TAB:
-            if (record->event.pressed) {
-                if (!is_alt_tab_active) {
-                    is_alt_tab_active = true;
-                    register_code(KC_LALT);
-                }
-                alt_tab_timer = timer_read();
-                register_code(KC_TAB);
-            } else {
-                unregister_code(KC_TAB);
-            }
-            break;
     }
     return true;
 }
@@ -270,13 +253,4 @@ layer_state_t layer_state_set_user(layer_state_t state) {
 
 void keyboard_post_init_user(void) {
     rgblight_setrgb(32, 163, 158);
-}
-
-void matrix_scan_user(void) { // The very important timer.
-    if (is_alt_tab_active) {
-        if (timer_elapsed(alt_tab_timer) > 1000) {
-            unregister_code(KC_LALT);
-            is_alt_tab_active = false;
-        }
-    }
 }
