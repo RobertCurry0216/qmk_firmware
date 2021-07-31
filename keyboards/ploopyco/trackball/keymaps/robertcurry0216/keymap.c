@@ -53,7 +53,7 @@ const int16_t SWIPE_THRESHOLD = 10;
 bool is_mac = true;
 
 // acceleration vars
-float acc_a = 0.75;
+float acc_a = 1;
 float acc_b = 0.5;
 
 int16_t acceleration(int16_t v) {
