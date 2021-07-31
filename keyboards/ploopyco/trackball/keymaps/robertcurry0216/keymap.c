@@ -52,13 +52,22 @@ const int16_t SWIPE_THRESHOLD = 10;
 // os vars
 bool is_mac = true;
 
+// acceleration vars
+float acc_a = 0.75;
+float acc_b = 0.5;
+
+int16_t acceleration(int16_t v) {
+    int16_t s = v / abs(v);
+    return (int16_t)(v*acc_a + v*v*acc_b*s);
+}
+
 void process_mouse_user(report_mouse_t* mouse_report, int16_t x, int16_t y) {
     if (is_swipe_gesture) {
         swipe_x += x;
         swipe_y += y;
     } else {
-        mouse_report->x = x;
-        mouse_report->y = y;
+        mouse_report->x = acceleration(x);
+        mouse_report->y = acceleration(y);
     }
 }
 
