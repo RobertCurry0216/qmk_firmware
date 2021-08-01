@@ -57,6 +57,9 @@ float acc_a = 1;
 float acc_b = 0.5;
 
 int16_t acceleration(int16_t v) {
+    if (v == 0){
+        return v;
+    }
     int16_t s = v / abs(v);
     return (int16_t)(v*acc_a + v*v*acc_b*s);
 }
