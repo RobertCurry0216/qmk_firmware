@@ -53,15 +53,15 @@ const int16_t SWIPE_THRESHOLD = 10;
 bool is_mac = true;
 
 // acceleration vars
-float acc_a = 1;
-float acc_b = 0.5;
+float acc_a = 0.85;
+float acc_b = 0.7;
 
 int16_t acceleration(int16_t v) {
     if (v == 0){
         return v;
     }
     int16_t s = v / abs(v);
-    return (int16_t)(v*acc_a + v*v*acc_b*s);
+    return (int16_t)(v*acc_a + v*v*s*acc_b);
 }
 
 void process_mouse_user(report_mouse_t* mouse_report, int16_t x, int16_t y) {
