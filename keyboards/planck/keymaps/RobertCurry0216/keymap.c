@@ -38,6 +38,11 @@ enum planck_keycodes {
   OS_CTL,
   OS_GUI,
   OS_ALT,
+  OS_CUT,
+  OS_CPY,
+  OS_PST,
+  OS_UNDO,
+  OS_REDO,
   OS_NTAB,
   OS_PTAB,
   ALT_TAB
@@ -96,19 +101,19 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
 /* Raise
  * ,-----------------------------------------------------------------------------------.
- * |      |      |   -  |   +  |   0  |      |      |   1  |   *  |   /  |   \  | Del  |
+ * |      |      |   -  |   +  |   5  |      |      |   6  |   *  |   /  |   \  | Del  |
  * |------+------+------+------+------+------+------+------+------+------+------+------|
- * |      |  6   |  7   |  8   |  9   |      |      |   2  |   3  |   4  |   5  |      |
+ * |      |  1   |  2   |  3   |  4   |   5  |   6  |   7  |   8  |   9  |   0  |      |
  * |------+------+------+------+------+------+------+------+------+------+------+------|
- * |      |      |      |      |      |      |      |      |      |      |      |      |
+ * |      |      |      |      |  5   |      |      |   6  |      |      |      |      |
  * |------+------+------+------+------+------+------+------+------+------+------+------|
  * |      |      |      |      |      |      =      |      |      |      |      |      |
  * `-----------------------------------------------------------------------------------'
  */
 [_RAISE] = LAYOUT_planck_grid(
-    _______, _______, KC_MINS, S(KC_EQL),KC_0,   _______, _______, KC_1,    S(KC_8), KC_SLSH, KC_BSLS, KC_DEL,
-    _______, KC_6,    KC_7,    KC_8,    KC_9,    _______, _______, KC_2,    KC_3,    KC_4,    KC_5,    _______,
-    _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______,
+    _______, _______, KC_MINS, S(KC_EQL),KC_5,   _______, _______, KC_6,    S(KC_8), KC_SLSH, KC_BSLS, KC_DEL,
+    _______, KC_1,    KC_2,    KC_3,    KC_4,    KC_5,    KC_6,    KC_7,    KC_8,    KC_9,    KC_0,    _______,
+    _______, _______, _______, _______, KC_5,    _______, _______, KC_6,    _______, _______, _______, _______,
     _______, _______, _______, _______, _______, KC_EQL,  KC_EQL,  _______, _______, _______, _______, _______
 ),
 
@@ -125,8 +130,8 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
  */
 [_LOWER] = LAYOUT_planck_grid(
     _______, _______, _______, _______, _______, _______, _______, OS_PTAB,   C(KC_UP),  OS_NTAB,     _______, _______,
-    _______, _______, _______, _______, ALT_TAB, _______, _______, C(KC_LEFT),C(KC_DOWN),C(KC_RIGHT), _______, _______,
-    _______, _______, _______, _______, _______, _______, _______, _______,   _______,   _______,     _______, _______,
+    _______, _______, _______, OS_PST,  OS_CPY,  OS_CUT, ALT_TAB, C(KC_LEFT),C(KC_DOWN),C(KC_RIGHT), _______, _______,
+    _______, _______, _______, OS_REDO, OS_UNDO, _______, _______, _______,   _______,   _______,     _______, _______,
     _______, _______, _______, _______, _______, KC_F1,   KC_F1,   _______,   _______,   _______,     _______, _______
 ),
 
@@ -248,6 +253,26 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
 
         case OS_ALT:
             process_os_key(record->event.pressed, KC_LALT, KC_LCTL);
+            return false;
+
+        case OS_CUT:
+            process_os_key(record->event.pressed, G(KC_X), C(KC_X));
+            return false;
+
+        case OS_CPY:
+            process_os_key(record->event.pressed, G(KC_C), C(KC_C));
+            return false;
+
+        case OS_PST:
+            process_os_key(record->event.pressed, G(KC_V), C(KC_V));
+            return false;
+
+        case OS_UNDO:
+            process_os_key(record->event.pressed, G(KC_Z), C(KC_Z));
+            return false;
+
+        case OS_REDO:
+            process_os_key(record->event.pressed, SGUI(KC_Z), C(KC_Y));
             return false;
 
         case OS_PTAB:
