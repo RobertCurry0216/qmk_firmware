@@ -62,20 +62,28 @@ bool is_mac = true;
 bool is_alt_tab_active = false;
 uint16_t alt_tab_timer = 0;
 
-// helper function to process a press differently depending on the os flag
+// helper functions to process a press differently depending on the os flag
+void register_os_key(uint16_t mac_keycode, uint16_t win_keycode){
+    if (is_mac){
+        register_code16(mac_keycode);
+    } else {
+        register_code16(win_keycode);
+    }
+}
+
+void unregister_os_key(uint16_t mac_keycode, uint16_t win_keycode){
+    if (is_mac){
+        unregister_code16(mac_keycode);
+    } else {
+        unregister_code16(win_keycode);
+    }
+}
+
 void process_os_key(bool is_pressed, uint16_t mac_keycode, uint16_t win_keycode){
     if (is_pressed) {
-        if (is_mac){
-            register_code16(mac_keycode);
-        } else {
-            register_code16(win_keycode);
-        }
+        register_os_key(mac_keycode, win_keycode);
     } else {
-        if (is_mac){
-            unregister_code16(mac_keycode);
-        } else {
-            unregister_code16(win_keycode);
-        }
+        unregister_os_key(mac_keycode, win_keycode);
     }
 }
 
@@ -129,9 +137,9 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
  * `-----------------------------------------------------------------------------------'
  */
 [_LOWER] = LAYOUT_planck_grid(
-    _______, _______, _______, _______, _______, _______, _______, OS_PTAB,   C(KC_UP),  OS_NTAB,     _______, _______,
-    _______, _______, _______, OS_PST,  OS_CPY,  OS_CUT, ALT_TAB, C(KC_LEFT),C(KC_DOWN),C(KC_RIGHT), _______, _______,
-    _______, _______, _______, OS_REDO, OS_UNDO, _______, _______, _______,   _______,   _______,     _______, _______,
+    _______, _______, _______, ALT_TAB, _______, _______, _______, OS_PTAB,   C(KC_UP),  OS_NTAB,     _______, _______,
+    _______, OS_REDO, OS_UNDO, OS_PST,  OS_CPY,  OS_CUT, _______, C(KC_LEFT),C(KC_DOWN),C(KC_RIGHT), _______, _______,
+    _______, _______, _______, _______, _______, _______, _______, _______,   _______,   _______,     _______, _______,
     _______, _______, _______, _______, _______, KC_F1,   KC_F1,   _______,   _______,   _______,     _______, _______
 ),
 
@@ -286,7 +294,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
             if (record->event.pressed) {
                 if (!is_alt_tab_active) {
                     is_alt_tab_active = true;
-                    register_code(KC_LALT);
+                    register_os_key(KC_LGUI, KC_LALT);
                 }
                 alt_tab_timer = timer_read();
                 register_code(KC_TAB);
@@ -301,7 +309,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
 void matrix_scan_user(void) { // The very important timer.
   if (is_alt_tab_active) {
     if (timer_elapsed(alt_tab_timer) > 500) {
-      unregister_code(KC_LALT);
+      unregister_os_key(KC_LGUI, KC_LALT);
       is_alt_tab_active = false;
     }
   }
