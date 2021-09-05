@@ -109,7 +109,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
 /* Raise
  * ,-----------------------------------------------------------------------------------.
- * |      |      |   -  |   +  |   5  |      |      |   6  |   *  |   /  |   \  | Del  |
+ * |      |      |   -  |   +  |   0  |      |      |   1  |   *  |   /  |   \  | Del  |
  * |------+------+------+------+------+------+------+------+------+------+------+------|
  * |      |  1   |  2   |  3   |  4   |   5  |   6  |   7  |   8  |   9  |   0  |      |
  * |------+------+------+------+------+------+------+------+------+------+------+------|
@@ -119,7 +119,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
  * `-----------------------------------------------------------------------------------'
  */
 [_RAISE] = LAYOUT_planck_grid(
-    _______, _______, KC_MINS, S(KC_EQL),KC_5,   _______, _______, KC_6,    S(KC_8), KC_SLSH, KC_BSLS, KC_DEL,
+    _______, _______, KC_MINS, S(KC_EQL),KC_0,   _______, _______, KC_1,    S(KC_8), KC_SLSH, KC_BSLS, KC_DEL,
     _______, KC_1,    KC_2,    KC_3,    KC_4,    KC_5,    KC_6,    KC_7,    KC_8,    KC_9,    KC_0,    _______,
     _______, _______, _______, _______, KC_5,    _______, _______, KC_6,    _______, _______, _______, _______,
     _______, _______, _______, _______, _______, KC_EQL,  KC_EQL,  _______, _______, _______, _______, _______
@@ -173,8 +173,8 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
  * `-----------------------------------------------------------------------------------'
  */
 [_ARROWS] = LAYOUT_planck_grid(
-    _______, KC_F1,   KC_F2,   KC_F3,   KC_F4,   KC_F5,   KC_F6,   KC_HOME, KC_UP,   KC_END,  KC_WH_U, _______,
-    _______, KC_F7,   KC_F8,   KC_F9,   KC_F10,  KC_F11,  KC_F12,  KC_LEFT, KC_DOWN, KC_RGHT, KC_WH_D, _______,
+    _______, KC_F1,   KC_F2,   KC_F3,   KC_F4,   KC_F5,   KC_F6,   KC_HOME, KC_UP,   KC_END,  KC_PGUP, _______,
+    _______, KC_F7,   KC_F8,   KC_F9,   KC_F10,  KC_F11,  KC_F12,  KC_LEFT, KC_DOWN, KC_RGHT, KC_PGDOWN, _______,
     _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______,
     _______, _______, _______, _______, _______, OS_ALT, OS_ALT, _______, _______, _______, _______, _______
 ),
@@ -308,7 +308,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
 
 void matrix_scan_user(void) { // The very important timer.
   if (is_alt_tab_active) {
-    if (timer_elapsed(alt_tab_timer) > 500) {
+    if (timer_elapsed(alt_tab_timer) > 1000) {
       unregister_os_key(KC_LGUI, KC_LALT);
       is_alt_tab_active = false;
     }

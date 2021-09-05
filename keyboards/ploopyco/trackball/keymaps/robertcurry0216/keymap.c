@@ -74,6 +74,14 @@ void process_mouse_user(report_mouse_t* mouse_report, int16_t x, int16_t y) {
     }
 }
 
+void tap_os_key(uint16_t mac_keycode, uint16_t win_keycode){
+    if (is_mac){
+        tap_code16(mac_keycode);
+    } else {
+        tap_code16(win_keycode);
+    }
+}
+
 void process_swipe_gesture(int16_t x, int16_t y) {
     if (abs(x) < SWIPE_THRESHOLD && abs(y) < SWIPE_THRESHOLD) {
         if (is_mac){
@@ -88,31 +96,15 @@ void process_swipe_gesture(int16_t x, int16_t y) {
 
     if (abs(x) > abs(y)){
         if (x > 0) { // swipe right
-            if (is_mac){
-                tap_code16(KC_MAC_PASTE);
-            } else {
-                tap_code16(KC_WIN_PASTE);
-            }
+            tap_os_key(KC_MAC_PASTE,KC_WIN_PASTE);
         } else { // swipe left
-            if (is_mac) {
-                tap_code16(KC_MAC_COPY);
-            } else {
-                tap_code16(KC_WIN_COPY);
-            }
+            tap_os_key(KC_MAC_COPY,KC_WIN_COPY);
         }
     } else {
         if (y > 0){ // swipe back
-            if (is_mac) {
-                tap_code16(KC_MAC_REDO);
-            } else {
-                tap_code16(KC_WIN_REDO);
-            }
+            tap_os_key(KC_MAC_REDO,KC_WIN_REDO);
         } else { // swipe forward
-            if (is_mac) {
-                tap_code16(KC_MAC_UNDO);
-            } else {
-                tap_code16(KC_WIN_UNDO);
-            }
+            tap_os_key(KC_MAC_UNDO,KC_WIN_UNDO);
         }
     }
 }
