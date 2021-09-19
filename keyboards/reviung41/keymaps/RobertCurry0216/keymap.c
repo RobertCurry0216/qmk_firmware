@@ -14,8 +14,6 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include QMK_KEYBOARD_H
-#include "muse.h"
-#include "rgblight.h"
 
 enum layer_names {
   _WORKMAN,
@@ -49,6 +47,7 @@ enum custom_keycodes {
 #define LOWER  MO(_LOWER)
 #define RAISE  MO(_RAISE)
 #define SFT_CAPS LSFT_T(KC_CAPSLOCK)
+#define SFT_ENTER LSFT_T(KC_ENT)
 #define LT_TAB LT(_ARROWS, KC_TAB)
 #define LT_QUOT LT(_SYMBOLS, KC_QUOT)
 
@@ -90,21 +89,21 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     KC_ESC,  KC_Q,      KC_D,    KC_R,      KC_W,     KC_B,               KC_J,    KC_F,    KC_U,    KC_P,    KC_SCLN,  KC_BSPC,
     LT_TAB,  KC_A,      KC_S,    KC_H,      KC_T,     KC_G,               KC_Y,    KC_N,    KC_E,    KC_O,    KC_I,     LT_QUOT,
     SFT_CAPS, KC_Z,     KC_X,    KC_M,      KC_C,     KC_V,               KC_K,    KC_L,    KC_COMM, KC_DOT,  KC_SLSH,  KC_ENT ,
-                                            OS_GUI,   LOWER,   KC_SPC,    RAISE,   KC_MEH
+                                            OS_GUI,   LOWER,   KC_SPC,    RAISE,   KC_MEH   
 ),
 
   [_LOWER] = LAYOUT_reviung41(
-    _______, _______, _______, _______, _______, _______,           _______, OS_PTAB,   C(KC_UP),  OS_NTAB,     _______, _______,
-    _______, OS_REDO, OS_UNDO, OS_PST,  OS_CPY,  OS_CUT,            _______, C(KC_LEFT),C(KC_DOWN),C(KC_RIGHT), _______, _______,
-    _______, _______, _______, _______, _______, _______,           _______, _______,   _______,   _______,     _______, _______,
-                                        _______, _______, KC_F1,    _______, _______
+    _______, _______, _______, ALT_TAB, _______, _______,                              _______, OS_PTAB,   C(KC_UP),  OS_NTAB,     _______, _______,
+    _______, OS_REDO, OS_UNDO, OS_PST,  OS_CPY,  OS_CUT,                               _______, C(KC_LEFT),C(KC_DOWN),C(KC_RIGHT), _______, _______,
+    _______, _______, OSM(MOD_LALT), OSM(MOD_LCTL), OSM(MOD_LGUI), _______,            _______, OSM(MOD_LGUI), OSM(MOD_LCTL), OSM(MOD_LALT),_______, _______,
+                                                            _______, _______, KC_F1,    _______, _______
 ),
 
   [_RAISE] = LAYOUT_reviung41(
-    _______, _______, KC_MINS, S(KC_EQL),KC_0,   _______,           _______, KC_1,    S(KC_8), KC_SLSH, KC_BSLS, KC_DEL,
-    _______, KC_1,    KC_2,    KC_3,    KC_4,    KC_5,              KC_6,    KC_7,    KC_8,    KC_9,    KC_0,    _______,
-    _______, _______, _______, _______, KC_5,    _______,           _______, KC_6,    _______, _______, _______, _______,
-                                        _______, _______, KC_EQL,  _______, _______
+    _______, S(KC_MINS),KC_MINS,S(KC_EQL),KC_0,    _______,          _______, KC_1,    S(KC_8), KC_SLSH, KC_BSLS, KC_DEL,
+    _______, KC_1,      KC_2,   KC_3,     KC_4,    KC_5,             KC_6,    KC_7,    KC_8,    KC_9,    KC_0,    _______,
+    _______, _______, _______, _______,   KC_5,    _______,          _______, KC_6,    _______, _______, _______, _______,
+                                          _______, _______, KC_EQL,  _______, _______
 ),
   
   [_ADJUST] = LAYOUT_reviung41(
@@ -127,11 +126,10 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     _______, _______, _______,   _______,   KC_LBRC, _______,         _______, KC_RBRC, _______,    _______,  _______,    _______,
                                             _______, _______, KC_EQL, _______, _______
 ),
-
   [_GAMING] = LAYOUT_reviung41(
     KC_ESC,  KC_Q,    KC_W,    KC_E,    KC_R,    KC_T,            KC_Y,    KC_U,    KC_I,    KC_O,    KC_P,    WORKMAN,
-    KC_TAB,  KC_A,    KC_S,    KC_D,    KC_F,    KC_G,            KC_H,    KC_J,    KC_K,    KC_L,    KC_SCLN, _______,
-    KC_LSFT, KC_Z,    KC_X,    KC_C,    KC_V,    KC_B,            KC_N,    KC_M,    KC_COMM, KC_DOT,  KC_UP,   _______ ,
+    KC_TAB,  KC_A,    KC_S,    KC_D,    KC_F,    KC_G,            KC_H,    KC_J,    KC_K,    KC_L,    KC_SCLN, LT_QUOT,
+    KC_LSFT, KC_Z,    KC_X,    KC_C,    KC_V,    KC_B,            KC_N,    KC_M,    KC_COMM, KC_DOT,  KC_UP,   KC_ENT ,
                                         KC_LCTL, KC_BTN2, KC_SPC,  XXXXXXX, XXXXXXX
 )
 };
@@ -143,7 +141,6 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
                 autoshift_disable();
                 layer_on(_GAMING);
             }
-            rgblight_setrgb(165, 16, 128);
             return false;
             break;
 
@@ -152,21 +149,14 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
                 autoshift_enable();
                 layer_off(_GAMING);
             }
-            if (is_mac) {
-                rgblight_setrgb(32, 163, 158);
-            } else {
-                rgblight_setrgb(246, 174, 45);
-            }
             return false;
             break;
 
         case TO_MAC:
-            rgblight_setrgb(32, 163, 158);
             is_mac = true;
             return false;
 
         case TO_WIN:
-            rgblight_setrgb(246, 174, 45);
             is_mac = false;
             return false;
 
@@ -209,8 +199,30 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
         case OS_NTAB:
             process_os_key(record->event.pressed, SGUI(KC_RBRC), C(KC_PGDN));
             return false;
+        case ALT_TAB:
+            if (record->event.pressed) {
+                if (!is_alt_tab_active) {
+                    is_alt_tab_active = true;
+                    register_os_key(KC_LGUI, KC_LALT);
+                }
+                alt_tab_timer = timer_read();
+                register_code(KC_TAB);
+            } else {
+                unregister_code(KC_TAB);
+            }
+            break;
     }
     return true;
+}
+
+
+void matrix_scan_user(void) { // The very important timer.
+  if (is_alt_tab_active) {
+    if (timer_elapsed(alt_tab_timer) > 1000) {
+      unregister_os_key(KC_LGUI, KC_LALT);
+      is_alt_tab_active = false;
+    }
+  }
 }
 
 
@@ -218,6 +230,3 @@ layer_state_t layer_state_set_user(layer_state_t state) {
   return update_tri_layer_state(state, _LOWER, _RAISE, _ADJUST);
 }
 
-void keyboard_post_init_user(void) {
-    rgblight_setrgb(32, 163, 158);
-}

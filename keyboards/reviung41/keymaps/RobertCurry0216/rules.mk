@@ -1,3 +1,3 @@
-SRC += muse.c
 AUTO_SHIFT_ENABLE = yes
+RGBLIGHT_ENABLE = no
 MOUSEKEY_ENABLE = yes
