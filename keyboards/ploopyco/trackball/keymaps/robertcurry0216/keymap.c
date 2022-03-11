@@ -35,7 +35,8 @@
 enum {
     KC_GESTURE=PLOOPY_SAFE_RANGE,
     KC_WIN,
-    KC_MAC
+    KC_MAC,
+    KC_DSCRL
 };
 
 enum ploopy_layers {
@@ -43,8 +44,21 @@ enum ploopy_layers {
     CONFIG
 };
 
+enum ball_states {
+    POINT,
+    SCROLL,
+    SWIPE
+};
+
+enum ball_states ball_state = POINT;
+
+
+// drag scroll vars
+int16_t drag_v = 0;
+int16_t drag_h = 0;
+const int16_t DRAG_THRESHOLD = 16;
+
 // swipe gesture vars
-bool is_swipe_gesture = false;
 int16_t swipe_x = 0;
 int16_t swipe_y = 0;
 const int16_t SWIPE_THRESHOLD = 10;
@@ -56,21 +70,41 @@ bool is_mac = true;
 float acc_a = 1;
 float acc_b = 0.5;
 
-int16_t acceleration(int16_t v) {
-    if (v == 0){
-        return v;
-    }
-    int16_t s = v / abs(v);
-    return (int16_t)(v*acc_a + v*v*acc_b*s);
+// helpers
+int16_t sign(int16_t x) {
+    return (int16_t)((x > 0) - (x < 0));
+}
+
+int16_t inverse_sign(int16_t x) {
+    return (int16_t)((x < 0) - (x > 0));
 }
 
 void process_mouse_user(report_mouse_t* mouse_report, int16_t x, int16_t y) {
-    if (is_swipe_gesture) {
-        swipe_x += x;
-        swipe_y += y;
-    } else {
-        mouse_report->x = acceleration(x);
-        mouse_report->y = acceleration(y);
+    switch (ball_state) {
+        case POINT:
+            mouse_report->x = x;
+            mouse_report->y = y;
+            return;
+
+        case SWIPE:
+            swipe_x += x;
+            swipe_y += y;
+            return;
+
+        case SCROLL: 
+            drag_v += y;
+            drag_h += x;
+
+            if (abs(drag_v) > DRAG_THRESHOLD) {
+                mouse_report->v = inverse_sign(drag_v);
+                drag_v = 0;
+            }
+
+            if (abs(drag_h) > DRAG_THRESHOLD) {
+                mouse_report->h = sign(drag_h);
+                drag_h = 0;
+            }
+            return;
     }
 }
 
@@ -110,12 +144,12 @@ void process_swipe_gesture(int16_t x, int16_t y) {
 }
 
 //turn off mouse wheel
-void process_wheel_user(report_mouse_t* mouse_report, int16_t h, int16_t v) {}
+//void process_wheel_user(report_mouse_t* mouse_report, int16_t h, int16_t v) {}
 
 
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     [MAIN] = LAYOUT( /* Base */
-        KC_BTN1, KC_BTN3, KC_GESTURE, KC_BTN2, DRAG_SCROLL
+        KC_BTN1, KC_BTN3, KC_GESTURE, KC_BTN2, KC_DSCRL
     ),
     [CONFIG] = LAYOUT( /* config */
         _______, _______, _______, KC_WIN, KC_MAC
@@ -127,13 +161,22 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
         case KC_GESTURE:
             if (record->event.pressed) {
                 layer_on(CONFIG);
-                is_swipe_gesture = true;
+                ball_state = SWIPE;
             } else {
                 layer_off(CONFIG);
                 process_swipe_gesture(swipe_x, swipe_y);
                 swipe_x = 0;
                 swipe_y = 0;
-                is_swipe_gesture = false;
+                ball_state = POINT;
+            }
+            return false;
+        case KC_DSCRL:
+            if (record->event.pressed) {
+                ball_state = SCROLL;
+            } else {
+                ball_state = POINT;
+                drag_h = 0;
+                drag_v = 0;
             }
             return false;
         case KC_WIN:
