@@ -41,6 +41,10 @@ enum custom_keycodes {
   OS_REDO,
   OS_NTAB,
   OS_PTAB,
+  OS_DSKL,
+  OS_DSKR,
+  OS_DSKU,
+  OS_EXIT,
   ALT_TAB
 };
 
@@ -93,8 +97,8 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 ),
 
   [_LOWER] = LAYOUT_reviung41(
-    _______, _______, _______, ALT_TAB, _______, _______,                              _______, OS_PTAB,   C(KC_UP),  OS_NTAB,     _______, _______,
-    _______, OS_REDO, OS_UNDO, OS_PST,  OS_CPY,  OS_CUT,                               _______, C(KC_LEFT),C(KC_DOWN),C(KC_RIGHT), _______, _______,
+    OS_EXIT, _______, _______, ALT_TAB, _______, _______,                              _______, OS_PTAB,   OS_DSKU,   OS_NTAB,     _______, _______,
+    _______, OS_REDO, OS_UNDO, OS_PST,  OS_CPY,  OS_CUT,                               _______, OS_DSKL,   C(KC_DOWN),OS_DSKR, _______, _______,
     _______, _______, OSM(MOD_LALT), OSM(MOD_LCTL), OSM(MOD_LGUI), _______,            _______, OSM(MOD_LGUI), OSM(MOD_LCTL), OSM(MOD_LALT),_______, _______,
                                                             _______, _______, KC_F1,    _______, _______
 ),
@@ -199,6 +203,23 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
         case OS_NTAB:
             process_os_key(record->event.pressed, SGUI(KC_RBRC), C(KC_PGDN));
             return false;
+
+        case OS_DSKL:
+            process_os_key(record->event.pressed, C(KC_LEFT), G(C(KC_LEFT)));
+            return false;
+
+        case OS_DSKR:
+            process_os_key(record->event.pressed, C(KC_RIGHT), G(C(KC_RIGHT)));
+            return false;
+
+        case OS_DSKU:
+            process_os_key(record->event.pressed, C(KC_UP), G(KC_TAB));
+            return false;
+
+        case OS_EXIT:
+            process_os_key(record->event.pressed, G(KC_Q), A(KC_F4));
+            return false;
+
         case ALT_TAB:
             if (record->event.pressed) {
                 if (!is_alt_tab_active) {
