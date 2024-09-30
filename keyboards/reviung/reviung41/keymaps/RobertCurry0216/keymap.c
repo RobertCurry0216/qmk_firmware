@@ -51,7 +51,7 @@ enum custom_keycodes {
 #define LOWER  MO(_LOWER)
 #define RAISE  MO(_RAISE)
 #define SFT_CAPS LSFT_T(KC_CAPS_LOCK)
-#define SFT_ENTER LSFT_T(KC_ENT)
+#define MC_ENTER MT(MOD_LCTL, KC_ENT)
 #define LT_TAB LT(_ARROWS, KC_TAB)
 #define LT_QUOT LT(_SYMBOLS, KC_QUOT)
 
@@ -92,7 +92,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   [_WORKMAN] = LAYOUT_reviung41(
     KC_ESC,  KC_Q,      KC_D,    KC_R,      KC_W,     KC_B,               KC_J,    KC_F,    KC_U,    KC_P,    KC_SCLN,  KC_BSPC,
     LT_TAB,  KC_A,      KC_S,    KC_H,      KC_T,     KC_G,               KC_Y,    KC_N,    KC_E,    KC_O,    KC_I,     LT_QUOT,
-    SFT_CAPS, KC_Z,     KC_X,    KC_M,      KC_C,     KC_V,               KC_K,    KC_L,    KC_COMM, KC_DOT,  KC_SLSH,  KC_ENT ,
+    SFT_CAPS, KC_Z,     KC_X,    KC_M,      KC_C,     KC_V,               KC_K,    KC_L,    KC_COMM, KC_DOT,  KC_SLSH,  MC_ENTER ,
                                             OS_GUI,   LOWER,   KC_SPC,    RAISE,   KC_MEH
 ),
 
