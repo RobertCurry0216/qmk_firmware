@@ -50,7 +50,7 @@ enum custom_keycodes {
 
 #define LOWER  MO(_LOWER)
 #define RAISE  MO(_RAISE)
-#define SFT_CAPS LSFT_T(KC_CAPSLOCK)
+#define SFT_CAPS LSFT_T(KC_CAPS_LOCK)
 #define SFT_ENTER LSFT_T(KC_ENT)
 #define LT_TAB LT(_ARROWS, KC_TAB)
 #define LT_QUOT LT(_SYMBOLS, KC_QUOT)
@@ -93,7 +93,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     KC_ESC,  KC_Q,      KC_D,    KC_R,      KC_W,     KC_B,               KC_J,    KC_F,    KC_U,    KC_P,    KC_SCLN,  KC_BSPC,
     LT_TAB,  KC_A,      KC_S,    KC_H,      KC_T,     KC_G,               KC_Y,    KC_N,    KC_E,    KC_O,    KC_I,     LT_QUOT,
     SFT_CAPS, KC_Z,     KC_X,    KC_M,      KC_C,     KC_V,               KC_K,    KC_L,    KC_COMM, KC_DOT,  KC_SLSH,  KC_ENT ,
-                                            OS_GUI,   LOWER,   KC_SPC,    RAISE,   KC_MEH   
+                                            OS_GUI,   LOWER,   KC_SPC,    RAISE,   KC_MEH
 ),
 
   [_LOWER] = LAYOUT_reviung41(
@@ -109,7 +109,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     _______, _______, _______, _______,   KC_5,    _______,          _______, KC_6,    _______, _______, _______, _______,
                                           _______, _______, KC_EQL,  _______, _______
 ),
-  
+
   [_ADJUST] = LAYOUT_reviung41(
     TO_WIN,  _______, _______, _______, _______, _______,          _______, _______, _______, _______, _______, GAMING,
     TO_MAC,  _______, _______, _______, _______, _______,          _______, _______, _______, _______, _______, _______,
@@ -119,7 +119,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
   [_ARROWS] = LAYOUT_reviung41(
     _______, KC_F1,   KC_F2,   KC_F3,   KC_F4,   KC_F5,           KC_F6,   KC_HOME, KC_UP,   KC_END,  KC_PGUP, _______,
-    _______, KC_F7,   KC_F8,   KC_F9,   KC_F10,  KC_F11,          KC_F12,  KC_LEFT, KC_DOWN, KC_RGHT, KC_PGDOWN, _______,
+    _______, KC_F7,   KC_F8,   KC_F9,   KC_F10,  KC_F11,          KC_F12,  KC_LEFT, KC_DOWN, KC_RGHT, KC_PGDN, _______,
     _______, _______, _______, _______, _______, _______,         _______, _______, _______, _______, _______, _______,
                                         _______, _______, OS_ALT, _______, _______
 ),
@@ -167,7 +167,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
         case OS_CTL:
             process_os_key(record->event.pressed, KC_LCTL, KC_LGUI);
             return false;
-                
+
         case OS_GUI:
             process_os_key(record->event.pressed, KC_LGUI, KC_LCTL);
             return false;
@@ -250,4 +250,3 @@ void matrix_scan_user(void) { // The very important timer.
 layer_state_t layer_state_set_user(layer_state_t state) {
   return update_tri_layer_state(state, _LOWER, _RAISE, _ADJUST);
 }
-
