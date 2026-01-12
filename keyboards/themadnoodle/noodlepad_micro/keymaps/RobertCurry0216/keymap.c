@@ -11,40 +11,29 @@
 #define AM_MUTE KC_MUTE
 
 // layer toggle
-#define OSPASS OSL(_PASSWORDS)
-
-// vs-code
-bool is_dark = true;
-
-// macros
-enum my_keycodes {
-    PW_WRK1 = SAFE_RANGE,
-    PW_WRK2,
-    VS_DARK,
-    VS_PRY
-};
+#define TLAYER TG(_ARROWS)
 
 // terminal
 #define TM_STOP C(KC_C)
 #define TM_EXIT C(KC_D)
 
 enum layer_names {
-  _VSCODE,
-  _PASSWORDS
+  _MEDIA,
+  _ARROWS
 };
 
 
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
-    [_VSCODE] = LAYOUT(
-      OSPASS,             AM_MUTE,
-      TM_EXIT,  XXXXXXX,  XXXXXXX,
-      TM_STOP,  VS_PRY,   VS_DARK
-      ),
-    [_PASSWORDS] = LAYOUT(
-      XXXXXXX,            _______,
-      PW_WRK1,  PW_WRK2,  XXXXXXX,
-      XXXXXXX,  XXXXXXX,  XXXXXXX
-      )
+    [_MEDIA] = LAYOUT(
+        TLAYER,   AM_MUTE,
+        KC_MPRV,  KC_MPLY,  KC_MNXT,
+        KC_MSTP,  KC_VOLD,  KC_VOLU
+    ),
+    [_ARROWS] = LAYOUT(
+        TLAYER,             AM_MUTE,
+        KC_Z,     KC_UP,    KC_X,
+        KC_LEFT,  KC_DOWN,  KC_RIGHT
+    ),
 };
 
 
@@ -52,61 +41,32 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 //-----------------------(ENC1)---------------------------------(ENC2)-----------------
 #if defined(ENCODER_MAP_ENABLE)
 const uint16_t PROGMEM encoder_map[][NUM_ENCODERS][NUM_DIRECTIONS] = {
-  [_VSCODE] =  { EN_ZOOM, EN_VOL  },
-  [_PASSWORDS] =  { EN_ZOOM, EN_VOL  }
+  [_MEDIA] =  { EN_ZOOM, EN_VOL  },
+  [_ARROWS] =  { EN_ZOOM, EN_VOL  }
 };
 #endif
 
-bool process_record_user(uint16_t keycode, keyrecord_t *record) {
-  switch (keycode) {
-    // vscode
-    case VS_DARK:
-      if (record->event.pressed) {
-        if (is_dark) {
-          is_dark = false;
-          SEND_STRING(SS_LGUI("kt") "atoh\n");
-        } else {
-          is_dark = true;
-          SEND_STRING(SS_LGUI("kt") "ato\n");
-        }
-      }
-      return false;
-    case VS_PRY:
-      if (record->event.pressed) {
-        SEND_STRING("\nrequire \"pry-nav\"; binding.pry");
-      }
-      return false;
-    // passwords
-    case PW_WRK1:
-      if (record->event.pressed) {
-        SEND_STRING("---"); // one password
-      }
-      return false;
-    case PW_WRK2:
-      if (record->event.pressed) {
-        send_string_with_delay("---", 50); // login
-      }
-      return false;
-    default:
-      return true;
-  }
-}
+// RGB layer lighting
+const rgblight_segment_t PROGMEM media_layer[] = RGBLIGHT_LAYER_SEGMENTS(
+    {0, 4, HSV_OFF}
+);
 
-// lighting
-layer_state_t layer_state_set_user(layer_state_t state) {
-    switch (get_highest_layer(state)) {
-    case _PASSWORDS:
-        rgblight_setrgb(RGB_RED);
-        break;
-    default:
-        rgblight_setrgb(RGB_OFF);
-        break;
-    }
-  return state;
-}
+const rgblight_segment_t PROGMEM arrows_layer[] = RGBLIGHT_LAYER_SEGMENTS(
+    {0, 4, HSV_BLUE}
+);
+
+const rgblight_segment_t* const PROGMEM rgb_layers[] = RGBLIGHT_LAYERS_LIST(
+    media_layer,
+    arrows_layer
+);
 
 void keyboard_post_init_user(void) {
-  rgblight_enable_noeeprom(); // For RGB underglow
-  rgblight_setrgb(RGB_OFF);
+    rgblight_layers = rgb_layers;
+    rgblight_set_layer_state(0, true);
 }
 
+layer_state_t layer_state_set_user(layer_state_t state) {
+    rgblight_set_layer_state(0, !layer_state_cmp(state, _ARROWS));
+    rgblight_set_layer_state(1, layer_state_cmp(state, _ARROWS));
+    return state;
+}
